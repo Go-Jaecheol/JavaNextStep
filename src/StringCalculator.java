@@ -3,33 +3,46 @@ import java.util.regex.Pattern;
 
 public class StringCalculator {
     public int add(String text) {
-        if (text == null || text.isEmpty()) {
+        if (isBlank(text)) {
             return 0;
         }
-        int sum = 0;
-        String[] tokens;
+        return sum(toInts(split(text)));
+    }
 
+    private boolean isBlank(String text) {
+        return text == null || text.isEmpty();
+    }
+
+    private String[] split(String text) {
         Matcher m = Pattern.compile("//(.)\n(.*)").matcher(text);
         if (m.find()) {
             String customDelimeter = m.group(1);
-            tokens = m.group(2).split(customDelimeter);
+            return m.group(2).split(customDelimeter);
         }
-        else {
-            tokens = text.split(",|:");
-        }
+        return text.split(",|:");
+    }
 
-        int[] numbers = new int[tokens.length];
-        for (int i = 0; i < tokens.length; i++) {
-            numbers[i] = Integer.parseInt(tokens[i]);
-            if (numbers[i] < 0) {
-                throw new RuntimeException();
-            }
+    private int[] toInts(String[] values) {
+        int[] numbers = new int[values.length];
+        for (int i = 0; i < values.length; i++) {
+            numbers[i] = toPositive(values[i]);
         }
+        return numbers;
+    }
 
+    private int toPositive(String value) {
+        int number = Integer.parseInt(value);
+        if (number < 0) {
+            throw new RuntimeException();
+        }
+        return number;
+    }
+
+    private int sum(int[] numbers) {
+        int sum = 0;
         for (int number : numbers) {
             sum += number;
         }
-
         return sum;
     }
 }
